@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  python:
+    build:
+      context: .  # Dockerfile 的位置
+      dockerfile: Dockerfile  # 自定義 Dockerfile 的名稱
+    container_name: LinebotWithDify
+    ports:
+      - "5000:5000"
+    volumes:
+      - C:\WorkSpace\yahooNewFetch_LINEBOT:/usr/src/app
+    networks:
+      - python_network
+
+networks:
+  python_network:

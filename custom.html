@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>${ENV, var="JOB_NAME"}-第${BUILD_NUMBER}次佈署日誌</title>
+<style>
+.post_body{
+    border-bottom: 2px dashed #ccc;
+    border: 2px dashed #202124;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-left: 3px solid #202124;
+}
+textarea{
+border: 2px dashed #202124;
+}
+</style>
+</head>
+<body leftmargin="8" marginwidth="0" topmargin="8" marginheight="4"
+    offset="0">
+    <table width="95%" cellpadding="0" cellspacing="0"
+        style="font-size: 11pt; font-family: Tahoma, Arial, Helvetica, sans-serif">
+        <tr>
+            <td>
+                <h2>
+                    <font>以下来自MarkWeb.Jenkins的郵件通知</font>
+                </h2>
+            </td>
+        </tr>
+        <tr>
+            <td class='post_body'>
+                <b><font color="#0B610B">佈署訊息</font></b>
+             </td>
+        </tr>
+        <tr>
+            <td>
+                <ul>
+                    <li>項目名稱&nbsp;：&nbsp;${PROJECT_NAME}</li>
+                    <li>佈署版號&nbsp;：&nbsp;${BUILD_NUMBER}</li>
+                    <li>佈署結果&nbsp;：&nbsp;${BUILD_STATUS}</li>
+                    <li>佈署日誌&nbsp;：&nbsp;<a href="${BUILD_URL}console">${BUILD_URL}console</a></li>
+                    <li>觸發原因&nbsp;：${CAUSE}</li>
+                    <li>單元測試報告&nbsp;：<a href="${BUILD_URL}testReport/">${BUILD_URL}testReport/</a></li>
+                    <li>工作目錄&nbsp;：&nbsp;<a href="${PROJECT_URL}ws">${PROJECT_URL}lastSuccessfulBuild/artifact/</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td class='post_body'><b><font color="#0B610B">佈署日誌:</font></b>
+        </tr>
+        <br />
+        <br />
+        <tr>
+            <td>
+            <textarea cols="120" rows="30" readonly="readonly" style="font-family: Courier New">${BUILD_LOG}</textarea>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
