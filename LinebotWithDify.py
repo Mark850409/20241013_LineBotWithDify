@@ -1,12 +1,14 @@
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage,FollowEvent, UnfollowEvent
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, ImageSendMessage, FollowEvent, UnfollowEvent, \
+    StickerSendMessage
 import requests
 import re
 import json
 from urllib.parse import unquote
-from setting import ACCESS_TOKEN, SECRET,API_ENDPOINT,DIFY_API_KEY
+from setting import ACCESS_TOKEN, SECRET, API_ENDPOINT, DIFY_API_KEY
+
 app = Flask(__name__)
 
 # LINE Bot 資訊
@@ -36,6 +38,28 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     user_message = event.message.text
+
+    # 判斷是否為問候語
+    greetings = ["你好", "嗨", "哈囉", "您好", "早安", "晚安", "hi", "hello"]
+    if not any(greeting.lower() in user_message.lower() for greeting in greetings):
+        # 先使用 push_message 回應用戶一個「查詢中請稍候」的訊息和貼圖
+        line_bot_api.push_message(
+            event.source.user_id,
+            [
+                TextSendMessage(text="收到您的關鍵字輸入，我正在進行查詢處理...，請稍候大約一分鐘左右..."),
+                StickerSendMessage(package_id="6362", sticker_id="11087930"),
+                StickerSendMessage(package_id="6362", sticker_id="11087931")
+            ]
+        )
+    else:
+        line_bot_api.push_message(
+            event.source.user_id,
+            [
+                TextSendMessage(text="收到您的 AI 關鍵字輸入，我正在進行生成處理...，請稍候大約一分鐘左右..."),
+                StickerSendMessage(package_id="6362", sticker_id="11087930"),
+                StickerSendMessage(package_id="6362", sticker_id="11087931")
+            ]
+        )
 
     # 傳送訊息到 Dify
     headers = {
@@ -68,16 +92,31 @@ def handle_message(event):
             url_pattern = r'https?://[^\s]+'
             urls = re.findall(url_pattern, cleaned_content)
 
-            # 解碼 URLs
+            # 解碼 URLs 並收集圖片 URL
+            image_urls = []
             for url in urls:
                 decoded_url = unquote(url)
                 cleaned_content = cleaned_content.replace(url, decoded_url)
+                # 如果是圖片 URL，就存記下來
+                if decoded_url.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                    image_urls.append(decoded_url)
+            print(f'image_url: {image_urls}')
+            # 分開回應每個圖片訊息
+            if image_urls:
+                for image_url in image_urls:
+                    line_bot_api.push_message(
+                        event.source.user_id,
+                        ImageSendMessage(original_content_url=image_url, preview_image_url=image_url)
+                    )
+                    # 傳送圖片的連結
+                    line_bot_api.push_message(
+                        event.source.user_id,
+                        TextSendMessage(text=f"您好，根據您查詢的關鍵字【{user_message}】\n查詢的圖片結果如下↓\n圖片連結：{image_url}")
+                    )
+            else:
+                messages = [TextSendMessage(text=cleaned_content)]
+                line_bot_api.reply_message(event.reply_token, messages)
 
-            # 回傳 Dify 的回覆到 LINE
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=cleaned_content)
-            )
         else:
             print(f'API Error: {dify_response.status_code}, Response: {dify_response.text}')
             line_bot_api.reply_message(
@@ -89,6 +128,7 @@ def handle_message(event):
             event.reply_token,
             TextSendMessage(text=f'發生錯誤: {str(e)}')
         )
+
 
 # LINE WEBHOOK串接進入點
 @app.route("/", methods=['POST'])
@@ -105,6 +145,7 @@ def linebot():
         print(body)  # 印出收到的內容
 
     return 'OK'  # 驗證 Webhook 使用，不能省略
+
 
 # 處理加入好友事件
 @handler.add(FollowEvent)
@@ -134,6 +175,7 @@ def handle_unfollow(event):
         event.reply_token,
         TextSendMessage(text=welcome_message)
     )
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)

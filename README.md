@@ -1,62 +1,65 @@
-## 1. 簡介
+# 1. 【自動化爬蟲】人工智慧工作坊-娛樂新聞助手-實作流程
+
+## 1.1. 簡介
 
 如何將爬蟲的資料建立成知識庫並串接`LLM模型`最後部署到`LINEBOT`
 
-## 2. 目錄
+## 1.2. 目錄
 
-- [1. 簡介](#1-簡介)
-- [2. 目錄](#2-目錄)
-- [3. 操作步驟](#3-操作步驟)
-  - [3.1. 使用docker安裝dify](#31-使用docker安裝dify)
-  - [3.2. dify基礎配置與設定](#32-dify基礎配置與設定)
-    - [3.2.1. 設定`dify`管理員帳號](#321-設定dify管理員帳號)
-    - [3.2.2. 設定`dify`語言與時區](#322-設定dify語言與時區)
-    - [3.2.3. 設定`模型供應商`](#323-設定模型供應商)
-  - [3.3. 建立`dify`新聞小助手應用](#33-建立dify新聞小助手應用)
-    - [3.3.1. 建立空白應用\&相關設定](#331-建立空白應用相關設定)
-  - [3.4. python爬蟲程式撰寫\&dify知識庫API串接](#34-python爬蟲程式撰寫dify知識庫api串接)
-    - [3.4.1. yahoo奇摩娛樂新聞爬蟲程式碼](#341-yahoo奇摩娛樂新聞爬蟲程式碼)
-    - [3.4.2. dify知識庫API串接範例](#342-dify知識庫api串接範例)
-  - [3.5. `LINEBOT`與`dify知識庫`進行串接](#35-linebot與dify知識庫進行串接)
-    - [3.5.1. `LINEBOT`與\`dify參數設定](#351-linebot與dify參數設定)
-    - [3.5.2. LINEBOT WEBHOOK CALLBACK程式](#352-linebot-webhook-callback程式)
-    - [3.5.3. LINEBOT 相關事件邏輯處理](#353-linebot-相關事件邏輯處理)
-    - [3.5.4. LINEBOT 主程式邏輯處理(負責接收使用傳遞過來的訊息與回應)](#354-linebot-主程式邏輯處理負責接收使用傳遞過來的訊息與回應)
-    - [3.5.5. 使用`python flask`啟動`server`](#355-使用python-flask啟動server)
-  - [3.6. 部署`LINEBOT`到`docker`](#36-部署linebot到docker)
-    - [3.6.1. 撰寫dockerfile](#361-撰寫dockerfile)
-    - [3.6.2. 撰寫docker-compose.yml](#362-撰寫docker-composeyml)
-    - [3.6.3. 部署到docker](#363-部署到docker)
-  - [3.7. 部署 Stable Diffusion WebUI到`docker`](#37-部署-stable-diffusion-webui到docker)
-  - [3.8. Stable Diffusion WebUI基礎設定](#38-stable-diffusion-webui基礎設定)
-  - [3.9. Stable Diffusion 自定義API串接](#39-stable-diffusion-自定義api串接)
-    - [3.9.1. 撰寫dockerfile](#391-撰寫dockerfile)
-    - [3.9.2. 撰寫docker-compose.yml](#392-撰寫docker-composeyml)
-    - [3.9.3. 撰寫app.py](#393-撰寫apppy)
-  - [3.10. dify工作流建立](#310-dify工作流建立)
-    - [3.10.1. 問題分類](#3101-問題分類)
-    - [3.10.2. 知識庫建立](#3102-知識庫建立)
-    - [3.10.3. 判斷提問相關性-LLM](#3103-判斷提問相關性-llm)
-    - [3.10.4. JSON Parse](#3104-json-parse)
-    - [3.10.5. 條件判斷](#3105-條件判斷)
-    - [3.10.6. GoogleSearch](#3106-googlesearch)
-    - [3.10.7. Json格式轉字串程式碼](#3107-json格式轉字串程式碼)
-    - [3.10.8. 根據google回覆-LLM](#3108-根據google回覆-llm)
-    - [3.10.9. GOOGLESEARCH問題回覆](#3109-googlesearch問題回覆)
-    - [3.10.10. 根據知識庫回覆-LLM](#31010-根據知識庫回覆-llm)
-    - [3.10.11. 知識庫問題回覆](#31011-知識庫問題回覆)
-    - [3.10.12. 建立自定義小工具](#31012-建立自定義小工具)
-    - [3.10.13. 自定義小工具流程設定](#31013-自定義小工具流程設定)
-    - [3.10.14. 判斷條件設定](#31014-判斷條件設定)
-    - [3.10.15. 圖檔語法轉換](#31015-圖檔語法轉換)
-    - [3.10.16. dify圖檔呈現結果](#31016-dify圖檔呈現結果)
-    - [3.10.17. LINEBOT圖檔呈現結果](#31017-linebot圖檔呈現結果)
-  - [3.11. LINEBOT圖檔回傳邏輯撰寫](#311-linebot圖檔回傳邏輯撰寫)
-  - [3.12. 測試結果](#312-測試結果)
+- [1. 【自動化爬蟲】人工智慧工作坊-娛樂新聞助手-實作流程](#1-自動化爬蟲人工智慧工作坊-娛樂新聞助手-實作流程)
+  - [1.1. 簡介](#11-簡介)
+  - [1.2. 目錄](#12-目錄)
+  - [1.3. 操作步驟](#13-操作步驟)
+    - [1.3.1. 使用docker安裝dify](#131-使用docker安裝dify)
+    - [1.3.2. dify基礎配置與設定](#132-dify基礎配置與設定)
+      - [1.3.2.1. 設定`dify`管理員帳號](#1321-設定dify管理員帳號)
+      - [1.3.2.2. 設定`dify`語言與時區](#1322-設定dify語言與時區)
+      - [1.3.2.3. 設定`模型供應商`](#1323-設定模型供應商)
+    - [1.3.3. 建立`dify`新聞小助手應用](#133-建立dify新聞小助手應用)
+      - [1.3.3.1. 建立空白應用\&相關設定](#1331-建立空白應用相關設定)
+    - [1.3.4. python爬蟲程式撰寫\&dify知識庫API串接](#134-python爬蟲程式撰寫dify知識庫api串接)
+      - [1.3.4.1. yahoo奇摩娛樂新聞爬蟲程式碼](#1341-yahoo奇摩娛樂新聞爬蟲程式碼)
+      - [1.3.4.2. dify知識庫API串接範例](#1342-dify知識庫api串接範例)
+    - [1.3.5. `LINEBOT`與`dify知識庫`進行串接](#135-linebot與dify知識庫進行串接)
+      - [1.3.5.1. `LINEBOT`與\`dify參數設定](#1351-linebot與dify參數設定)
+      - [1.3.5.2. LINEBOT WEBHOOK CALLBACK程式](#1352-linebot-webhook-callback程式)
+      - [1.3.5.3. LINEBOT 相關事件邏輯處理](#1353-linebot-相關事件邏輯處理)
+      - [1.3.5.4. LINEBOT 主程式邏輯處理(負責接收使用傳遞過來的訊息與回應)](#1354-linebot-主程式邏輯處理負責接收使用傳遞過來的訊息與回應)
+      - [1.3.5.5. 使用`python flask`啟動`server`](#1355-使用python-flask啟動server)
+    - [1.3.6. 部署`LINEBOT`到`docker`](#136-部署linebot到docker)
+      - [1.3.6.1. 撰寫dockerfile](#1361-撰寫dockerfile)
+      - [1.3.6.2. 撰寫docker-compose.yml](#1362-撰寫docker-composeyml)
+      - [1.3.6.3. 部署到docker](#1363-部署到docker)
+    - [1.3.7. 部署 Stable Diffusion WebUI到`docker`](#137-部署-stable-diffusion-webui到docker)
+    - [1.3.8. Stable Diffusion WebUI基礎設定](#138-stable-diffusion-webui基礎設定)
+    - [1.3.9. Stable Diffusion 自定義API串接](#139-stable-diffusion-自定義api串接)
+      - [1.3.9.1. 撰寫dockerfile](#1391-撰寫dockerfile)
+      - [1.3.9.2. 撰寫docker-compose.yml](#1392-撰寫docker-composeyml)
+      - [1.3.9.3. 撰寫app.py](#1393-撰寫apppy)
+    - [1.3.10. dify工作流建立](#1310-dify工作流建立)
+      - [1.3.10.1. 問題分類](#13101-問題分類)
+      - [1.3.10.2. 知識庫建立](#13102-知識庫建立)
+      - [1.3.10.3. 判斷提問相關性-LLM](#13103-判斷提問相關性-llm)
+      - [1.3.10.4. JSON Parse](#13104-json-parse)
+      - [1.3.10.5. 條件判斷](#13105-條件判斷)
+      - [1.3.10.6. GoogleSearch](#13106-googlesearch)
+      - [1.3.10.7. Json格式轉字串程式碼](#13107-json格式轉字串程式碼)
+      - [1.3.10.8. 根據google回覆-LLM](#13108-根據google回覆-llm)
+      - [1.3.10.9. GOOGLESEARCH問題回覆](#13109-googlesearch問題回覆)
+      - [1.3.10.10. 根據知識庫回覆-LLM](#131010-根據知識庫回覆-llm)
+      - [1.3.10.11. 知識庫問題回覆](#131011-知識庫問題回覆)
+      - [1.3.10.12. 建立自定義小工具](#131012-建立自定義小工具)
+      - [1.3.10.13. 自定義小工具流程設定](#131013-自定義小工具流程設定)
+      - [1.3.10.14. 判斷條件設定](#131014-判斷條件設定)
+      - [1.3.10.15. 圖檔語法轉換](#131015-圖檔語法轉換)
+      - [1.3.10.16. dify圖檔呈現結果](#131016-dify圖檔呈現結果)
+      - [1.3.10.17. LINEBOT圖檔呈現結果](#131017-linebot圖檔呈現結果)
+    - [1.3.11. LINEBOT圖檔回傳邏輯撰寫](#1311-linebot圖檔回傳邏輯撰寫)
+    - [1.3.12. 測試結果](#1312-測試結果)
 
-## 3. 操作步驟
+## 1.3. 操作步驟
 
-### 3.1. 使用docker安裝dify
+### 1.3.1. 使用docker安裝dify
 
 git clone指令，將 Dify 複製到你的裝置中
 
@@ -89,22 +92,24 @@ docker compose up -d # 這邊的 -d 是背景執行的意思
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410131926785.png)
 
 
-### 3.2. dify基礎配置與設定
-#### 3.2.1. 設定`dify`管理員帳號
+<!--more-->
+
+### 1.3.2. dify基礎配置與設定
+#### 1.3.2.1. 設定`dify`管理員帳號
 
 安裝完成後，請先進入dify主畫面
 ```
 http://localhost:[ports]/install
 ```
 
-#### 3.2.2. 設定`dify`語言與時區
+#### 1.3.2.2. 設定`dify`語言與時區
 
 到右上角點擊頭像->設定 -> 語言
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410131933305.png)
 
 
-#### 3.2.3. 設定`模型供應商`
+#### 1.3.2.3. 設定`模型供應商`
 
 到右上角點擊頭像->設定 -> 模型供應商
 
@@ -113,9 +118,9 @@ http://localhost:[ports]/install
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410131938562.png)
 
 
-### 3.3. 建立`dify`新聞小助手應用
+### 1.3.3. 建立`dify`新聞小助手應用
 
-#### 3.3.1. 建立空白應用&相關設定
+#### 1.3.3.1. 建立空白應用&相關設定
 
 到最上方點擊工作室->建立空白應用 -> 選擇聊天助手->基礎編排->`名稱`可以`任意取`->點擊建立
 
@@ -180,9 +185,9 @@ http://localhost:[ports]/install
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410131955698.png)
 
 
-### 3.4. python爬蟲程式撰寫&dify知識庫API串接
+### 1.3.4. python爬蟲程式撰寫&dify知識庫API串接
 
-#### 3.4.1. yahoo奇摩娛樂新聞爬蟲程式碼
+#### 1.3.4.1. yahoo奇摩娛樂新聞爬蟲程式碼
 
 這邊以yahoo奇摩娛樂新聞為主，可自行調整撰寫，主要爬蟲片段如下
 
@@ -329,7 +334,7 @@ finally:
         driver.quit()
 ```
 
-#### 3.4.2. dify知識庫API串接範例
+#### 1.3.4.2. dify知識庫API串接範例
 
 
 檢查資料集是否存在
@@ -486,10 +491,10 @@ upload_to_dify(txt_filename, dataset_id, document_id, api_key)
 ```
 
 
-### 3.5. `LINEBOT`與`dify知識庫`進行串接
+### 1.3.5. `LINEBOT`與`dify知識庫`進行串接
 
 
-#### 3.5.1. `LINEBOT`與`dify參數設定
+#### 1.3.5.1. `LINEBOT`與`dify參數設定
 
 ```python
 from flask import Flask, request, abort  
@@ -513,7 +518,7 @@ DIFY_API_KEY = DIFY_API_KEY
 ```
 
 
-#### 3.5.2. LINEBOT WEBHOOK CALLBACK程式
+#### 1.3.5.2. LINEBOT WEBHOOK CALLBACK程式
 
 ```python
 # Webhook 路徑，設定為 LINE Webhook URL@app.route("/callback", methods=['POST'])  
@@ -548,7 +553,7 @@ def linebot():
     return 'OK'  # 驗證 Webhook 使用，不能省略
 ```
 
-#### 3.5.3. LINEBOT 相關事件邏輯處理
+#### 1.3.5.3. LINEBOT 相關事件邏輯處理
 ```python
 # 處理加入好友事件  
 @handler.add(FollowEvent)  
@@ -580,7 +585,7 @@ def handle_unfollow(event):
 ```
 
 
-#### 3.5.4. LINEBOT 主程式邏輯處理(負責接收使用傳遞過來的訊息與回應)
+#### 1.3.5.4. LINEBOT 主程式邏輯處理(負責接收使用傳遞過來的訊息與回應)
 
 ```python
 
@@ -641,7 +646,7 @@ def handle_message(event):
         )
 ```
 
-#### 3.5.5. 使用`python flask`啟動`server`
+#### 1.3.5.5. 使用`python flask`啟動`server`
 
 ```python
 if __name__ == "__main__":  
@@ -649,9 +654,9 @@ if __name__ == "__main__":
 ```
 
 
-### 3.6. 部署`LINEBOT`到`docker`
+### 1.3.6. 部署`LINEBOT`到`docker`
 
-#### 3.6.1. 撰寫dockerfile
+#### 1.3.6.1. 撰寫dockerfile
 
 ```docker
 # 使用 Python部署Flask後端框架  
@@ -667,7 +672,7 @@ EXPOSE 5000
 CMD ["python", "LinebotWithDify.py"]
 ```
 
-#### 3.6.2. 撰寫docker-compose.yml
+#### 1.3.6.2. 撰寫docker-compose.yml
 
 ```docker
 version: '3.8'  
@@ -690,7 +695,7 @@ networks:
 
 ```
 
-#### 3.6.3. 部署到docker
+#### 1.3.6.3. 部署到docker
 
 將相關python檔案及上面寫好的腳本放置同一個目錄，執行以下命令
 
@@ -708,7 +713,7 @@ docker-compose up -d
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410132027084.png)
 
 
-### 3.7. 部署 Stable Diffusion WebUI到`docker`
+### 1.3.7. 部署 Stable Diffusion WebUI到`docker`
 
 確認Docker認得到你的Nvidia顯示卡驅動版本
 
@@ -746,7 +751,7 @@ docker compose --profile auto up
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162106459.png)
 
-### 3.8. Stable Diffusion WebUI基礎設定
+### 1.3.8. Stable Diffusion WebUI基礎設定
 
 點擊Extensions->Install from URL -> URL for extension's git repository ->將下方網頁說明的內容覺得有需要就`安裝`，算是`外掛增強`的一部分
 
@@ -755,11 +760,11 @@ https://www.chias.com.tw/%e3%80%90stable-diffusion%e3%80%91%e5%bf%85%e8%a3%9d%e6
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162109566.png)
 
 
-### 3.9. Stable Diffusion 自定義API串接
+### 1.3.9. Stable Diffusion 自定義API串接
 
 1. 因為dify現有的功能`非常簡陋`，這邊建議手動開發
 2. 此步驟有用到`Firebase Storage`，用來將模型生成的圖片上傳至公開平台，取得網址後回傳，因此`stable-diffusion-customapi-firebase-adminsdk-bzguv-d0beefeec8.json`是Firebase的設定檔
-#### 3.9.1. 撰寫dockerfile
+#### 1.3.9.1. 撰寫dockerfile
 
 ```docker
 # 使用官方 Python 映像
@@ -781,7 +786,7 @@ EXPOSE 5000
 CMD ["python", "app.py"]
 ```
 
-#### 3.9.2. 撰寫docker-compose.yml
+#### 1.3.9.2. 撰寫docker-compose.yml
 
 ```docker
 version: '3.8'
@@ -795,7 +800,7 @@ services:
       - C:\WorkSpace\stable-diffusion-customAPI:/app  # 掛載 volume
 ```
 
-#### 3.9.3. 撰寫app.py
+#### 1.3.9.3. 撰寫app.py
 
 ```python
 from flask import Flask, request, jsonify
@@ -924,15 +929,15 @@ docker-compose up -d
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162124891.png)
 
-### 3.10. dify工作流建立
+### 1.3.10. dify工作流建立
 
-#### 3.10.1. 問題分類
+#### 1.3.10.1. 問題分類
 
 主要分為新聞、圖片、問候語、其他，根據不同的流程會到達不同的地方
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162127158.png)
 
-#### 3.10.2. 知識庫建立
+#### 1.3.10.2. 知識庫建立
 
 這邊將先前撰寫的`python爬蟲程式`結果會寫入這個`知識庫`，這裡就可以直接使用
 
@@ -942,31 +947,31 @@ docker-compose up -d
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162129527.png)
 
 
-#### 3.10.3. 判斷提問相關性-LLM
+#### 1.3.10.3. 判斷提問相關性-LLM
 
 這個步驟是判斷使用者的提問和知識庫是否有相關，會回傳一個結果，用於後續的判斷
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162131168.png)
 
-#### 3.10.4. JSON Parse
+#### 1.3.10.4. JSON Parse
 
 這個步驟是為了解析剛才的結果，因為回傳是JSON格式
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162133054.png)
 
-#### 3.10.5. 條件判斷
+#### 1.3.10.5. 條件判斷
 
 這個步驟是為了判斷，若提問不相關就走上方，提問相關就走下方
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162134124.png)
 
-#### 3.10.6. GoogleSearch
+#### 1.3.10.6. GoogleSearch
 
 這個步驟是如果提問不相關，就串接此API直接從`網路查詢`資料
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162135551.png)
 
-#### 3.10.7. Json格式轉字串程式碼
+#### 1.3.10.7. Json格式轉字串程式碼
 
 這個步驟是為了將google search的回傳結果轉換為字串，因為`LLM`的不吃`JSON格式`
 ```python
@@ -981,32 +986,32 @@ def main(http_response: str) -> str:
     return {'result':json.dumps(data, ensure_ascii=False, indent=4)}
 ```
 
-#### 3.10.8. 根據google回覆-LLM
+#### 1.3.10.8. 根據google回覆-LLM
 
 這個步驟用來撰寫一段提示詞，根據使用者的詢問回傳適當的結果
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162139647.png)
 
-#### 3.10.9. GOOGLESEARCH問題回覆
+#### 1.3.10.9. GOOGLESEARCH問題回覆
 
 用於最終結果呈現
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162141915.png)
 
-#### 3.10.10. 根據知識庫回覆-LLM
+#### 1.3.10.10. 根據知識庫回覆-LLM
 
 這個步驟用來撰寫一段提示詞，根據使用者的詢問回傳適當的結果
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162142926.png)
 
-#### 3.10.11. 知識庫問題回覆
+#### 1.3.10.11. 知識庫問題回覆
 
 用於最終結果呈現
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162143590.png)
 
 
-#### 3.10.12. 建立自定義小工具
+#### 1.3.10.12. 建立自定義小工具
 
 請先進入這個網址
 http://localhost:5001/openapi/swagger
@@ -1029,7 +1034,7 @@ http://localhost:5001/openapi/swagger
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162148202.png)
 
-#### 3.10.13. 自定義小工具流程設定
+#### 1.3.10.13. 自定義小工具流程設定
 
 generate_image_generate_post
 
@@ -1044,14 +1049,14 @@ generate_image_generate_post
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162152714.png)
 
 
-#### 3.10.14. 判斷條件設定
+#### 1.3.10.14. 判斷條件設定
 
 因為這邊想要串接到`LINEBOT`，但發現`dify`和`LINEBOT`回傳格式不同，因此這邊多了一個判斷條件，若字詞包含`dify`走上方，否則走下方
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162153639.png)
 
 
-#### 3.10.15. 圖檔語法轉換
+#### 1.3.10.15. 圖檔語法轉換
 
 這邊多了一個語法轉換，語法如下
 
@@ -1061,16 +1066,16 @@ generate_image_generate_post
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162155827.png)
 
-#### 3.10.16. dify圖檔呈現結果
+#### 1.3.10.16. dify圖檔呈現結果
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162156819.png)
 
-#### 3.10.17. LINEBOT圖檔呈現結果
+#### 1.3.10.17. LINEBOT圖檔呈現結果
 
 ![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162157069.png)
 
 
-### 3.11. LINEBOT圖檔回傳邏輯撰寫
+### 1.3.11. 多圖檔回傳邏輯撰寫
 
 主要是在`handle_message`增加邏輯判斷處理，這邊有個重要的地方是`image_url`必須是`公開的網址`，若是`私人網址`可能會導致圖片回傳呈現有問題。
 
@@ -1102,14 +1107,208 @@ generate_image_generate_post
 ```
 
 
-### 3.12. 測試結果
+### 1.3.12. 增加關鍵字搜尋圖片功能
 
-LINEBOT
+參數定義及測試可以參考 https://serpapi.com/playground
 
-![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162203069.png)
-
-
-![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162203577.png)
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231833269.png)
 
 
-![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410162207688.png)
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231834468.png)
+
+
+### 1.3.13. 解析JSON格式語法
+
+按照以下步驟建立
+1. 輸入變量名稱->http_response
+2. 變數選擇body
+3. 貼上下方的python語法
+4. 輸出變量名稱->imageURLs
+5. 回傳格式->這邊要選擇`Array[Object]`，不是`String`
+
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231837081.png)
+
+```python
+import json
+import random
+import re
+
+def main(http_response: str) -> list:
+    try:
+        # 將 http_response 轉換為 Python 字典
+        data = json.loads(http_response)
+        
+        # 確保 images_results 存在並且是列表
+        images_results = data.get('images_results', [])
+        
+        if not isinstance(images_results, list):
+            return [{'error': 'images_results is not a valid list'}]
+            
+        # 過濾出副檔名為 .jpg、.jpeg、.png 的圖片
+        valid_images = [item for item in images_results if isinstance(item, dict) and 'thumbnail' in item and re.search(r'\.(jpg|jpeg|png)$', item['thumbnail'], re.IGNORECASE)]
+
+  
+        # 隨機選取 5 個 thumbnail URL（如果列表中少於 5 個，則返回所有）
+        random_images = random.sample(valid_images, min(5, len(valid_images)))
+        image_urls = [{'thumbnail': item['thumbnail']} for item in random_images]
+
+
+        # 返回隨機 5 個圖片的 URL 列表
+        return {
+            'imageURLs': image_urls
+        }
+
+    except json.JSONDecodeError:
+        # 捕捉 JSON 解析錯誤
+        return [{'error': 'Invalid JSON format'}]
+
+    except TypeError as e:
+        # 捕捉其他可能的錯誤
+        return [{'error': f'An unexpected error occurred: {str(e)}'}]
+
+    except ValueError:
+        # 捕捉 random.sample 的錯誤（如列表為空時）
+        return [{'error': 'No images available to select'}]
+```
+
+
+### 1.3.14. 搜圖圖檔語法轉換
+
+按照以下步驟建立
+1. 輸入變量名稱->imageURLs
+2. 變數選擇解析完成後的`Array[Object]`
+3. 貼上下方的python語法
+4. 輸出變量名稱->imageURLs
+5. 回傳格式->這邊要選擇`Array[Object]`，不是`String`
+
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231902898.png)
+
+```Jinja2
+{% for item in imageURLs %}
+![圖片{{ loop.index }}]({{ item.thumbnail }})
+{% endfor %}
+```
+
+### 1.3.15. 搜圖圖檔呈現
+
+將前一步驟輸出的變數放入模板內即可
+
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231907038.png)
+
+
+### 1.3.16. LINEBOT邏輯改寫
+
+按照以下步驟建立
+1. 增加問候語、AI文生圖判斷邏輯，符合條件回傳相對應的文字及貼圖
+2. 宣告陣列存放`image_urls`，若生成的是圖片，則先回傳圖片再傳文字，若生成的是文字，則直接回傳文字訊息
+
+
+```python
+# 處理 LINE 傳送過來的訊息  
+@handler.add(MessageEvent, message=TextMessage)  
+def handle_message(event):  
+    user_message = event.message.text  
+  
+    # 判斷是否為問候語  
+    greetings = ["你好", "嗨", "哈囉", "您好", "早安", "晚安", "hi", "hello"]  
+    if not any(greeting.lower() in user_message.lower() for greeting in greetings):  
+        # 先使用 push_message 回應用戶一個「查詢中請稍候」的訊息和貼圖  
+        line_bot_api.push_message(  
+            event.source.user_id,  
+            [                TextSendMessage(text="收到您的關鍵字輸入，我正在進行查詢處理...，請稍候大約一分鐘左右..."),  
+                StickerSendMessage(package_id="6362", sticker_id="11087930"),  
+                StickerSendMessage(package_id="6362", sticker_id="11087931")  
+            ]        )    
+    else:  
+        line_bot_api.push_message(  
+            event.source.user_id,  
+            [                TextSendMessage(text="收到您的 AI 關鍵字輸入，我正在進行生成處理...，請稍候大約一分鐘左右..."),  
+                StickerSendMessage(package_id="6362", sticker_id="11087930"),  
+                StickerSendMessage(package_id="6362", sticker_id="11087931")  
+            ]        )  
+    # 傳送訊息到 Dify    headers = {  
+        'Authorization': f'Bearer {DIFY_API_KEY}',  
+        'Content-Type': 'application/json'  
+    }  
+  
+    payload = {  
+        "inputs": {},  
+        "query": user_message,  
+        "response_mode": "blocking",  
+        "conversation_id": "",  
+        "user": "abc-123"  
+    }  
+  
+    try:  
+        dify_response = requests.post(DIFY_API_URL, headers=headers, json=payload)  
+  
+        if dify_response.status_code == 200:  
+            # 提取 JSON 回應內容  
+            dify_reply = dify_response.json()  
+  
+            # 假設 'answer' 欄位中包含所需的內容  
+            answer_content = dify_reply.get('answer', '')  
+  
+            # 使用正規表示式移除 <context> 和 </context> 標籤及其中的內容  
+            cleaned_content = re.sub(r'<context>.*?</context>', '', answer_content, flags=re.DOTALL).strip()  
+  
+            # 使用正規表示式找到 URL，並解碼它  
+            url_pattern = r'https?://[^\s]+'  
+            urls = re.findall(url_pattern, cleaned_content)  
+  
+            # 解碼 URLs 並收集圖片 URL            image_urls = []  
+            for url in urls:  
+                decoded_url = unquote(url)  
+                cleaned_content = cleaned_content.replace(url, decoded_url)  
+                # 如果是圖片 URL，就存記下來  
+                if decoded_url.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):  
+                    image_urls.append(decoded_url)  
+            print(f'image_url: {image_urls}')  
+            # 分開回應每個圖片訊息  
+            if image_urls:  
+                for image_url in image_urls:  
+                    line_bot_api.push_message(  
+                        event.source.user_id,  
+                        ImageSendMessage(original_content_url=image_url, preview_image_url=image_url)  
+                    )                    # 傳送圖片的連結  
+                    line_bot_api.push_message(  
+                        event.source.user_id,  
+                        TextSendMessage(text=f"您好，根據您查詢的關鍵字【{user_message}】\n查詢的圖片結果如下↓\n圖片連結：{image_url}")  
+                    )            
+            else:  
+                messages = [TextSendMessage(text=cleaned_content)]  
+                line_bot_api.reply_message(event.reply_token, messages)  
+  
+        else:  
+            print(f'API Error: {dify_response.status_code}, Response: {dify_response.text}')  
+            line_bot_api.reply_message(  
+                event.reply_token,  
+                TextSendMessage(text=f'Dify 回應失敗，狀態碼: {dify_response.status_code}')  
+            )    except Exception as e:  
+        line_bot_api.reply_message(  
+            event.reply_token,  
+            TextSendMessage(text=f'發生錯誤: {str(e)}')  
+        )
+```
+
+### 1.3.17. 測試結果
+
+LINEBOT->查詢圖片
+
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231914451.png)
+
+
+
+LINEBOT->查詢新聞
+
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231915578.png)
+
+
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231916202.png)
+
+
+LINEBOT->AI生成圖片
+
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231917339.png)
+
+![](https://raw.githubusercontent.com/Mark850409/20241013_LineBotWithDify/refs/heads/master/images/202410231917943.png)
